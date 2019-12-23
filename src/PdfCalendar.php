@@ -174,24 +174,24 @@ class PdfCalendar
                 ->format('Y-m-d'), '2<sup>e</sup> Pinksterdag'
         );
 
-        $dtMoederdag = new \DateTime($year.'-05-01');
-        while ($dtMoederdag->format('N') != 7) {
-            $dtMoederdag->add(new \DateInterval('P1D'));
+        $dtMothersday = new \DateTime($year.'-05-01');
+        while ($dtMothersday->format('N') != 7) {
+            $dtMothersday->add(new \DateInterval('P1D'));
         }
-        $dtMoederdag->add(new \DateInterval('P7D'));
+        $dtMothersday->add(new \DateInterval('P7D'));
 
         $this->_addHoliday(
-            $dtMoederdag->format('Y-m-d'), 'Moederdag'
+            $dtMothersday->format('Y-m-d'), 'Moederdag'
         );
 
-        $dtVaderdag = new \DateTime($year.'-06-01');
-        while ($dtVaderdag->format('N') != 7) {
-            $dtVaderdag->add(new \DateInterval('P1D'));
+        $dtFathersday = new \DateTime($year.'-06-01');
+        while ($dtFathersday->format('N') != 7) {
+            $dtFathersday->add(new \DateInterval('P1D'));
         }
-        $dtVaderdag->add(new \DateInterval('P14D'));
+        $dtFathersday->add(new \DateInterval('P14D'));
 
         $this->_addHoliday(
-            $dtVaderdag->format('Y-m-d'), 'Vaderdag'
+            $dtFathersday->format('Y-m-d'), 'Vaderdag'
         );
     }
 
