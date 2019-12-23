@@ -72,7 +72,7 @@ class PdfCalendar
      */
     private function _addHoliday(string $dateYMD, string $name) : void
     {
-        $this->_holidays[$dateYMD] = $name;
+        $this->_holidays[$dateYMD][] = $name;
     }
 
     /**
@@ -295,7 +295,7 @@ class PdfCalendar
                     $extraClass,
                     strftime('%A', $day->format('U')),
                     ($isHoliday ? '<br /><span class="holiday">'.
-                        $this->_holidays[$dayYMD].'</span>' : '')
+                        join('<br />', $this->_holidays[$dayYMD]).'</span>' : '')
                 );
                 $html .= sprintf(
                     '<td class="r%s">%d</td>',
