@@ -1,0 +1,31 @@
+table{
+	font-family: sans-serif;
+}
+th {
+	font-size: 12mm;
+	text-align: left;
+}
+td {
+	border-top: solid 1mm black;
+	vertical-align: top;
+}
+td.last {
+	border-bottom: solid 1mm black;
+}
+td.l{
+	font-size: 6mm;
+}
+td.r{
+	font-size: 16mm;
+	font-weight: bold;
+	padding-top: 13mm;
+}
+.l{
+	width: 15cm;
+}
+.r{
+	text-align: right;
+	width: 4cm;
+}
+.holiday{
+}

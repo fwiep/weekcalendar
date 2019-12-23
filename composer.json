@@ -1,0 +1,18 @@
+{
+  "name" : "fwiep/weekcalendar",
+  "description" : "Generate Dutch weekcalendars PDF using PHP",
+  "type" : "project",
+  "require" : {
+    "mpdf/mpdf" : "^8.0"
+  },
+  "authors" : [{
+      "name" : "Frans-Willem Post",
+      "email" : "fwiep@fwiep.nl"
+    }
+  ],
+  "autoload" : {
+    "psr-4" : {
+      "FWieP\\" : "src"
+    }
+  }
+}
