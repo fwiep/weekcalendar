@@ -17,7 +17,7 @@ anniversary&hellip;
 
 ## Example
 
-A week calendar of the year 2020, having no additional holidays added
+A week calendar of the year 2023, having no additional holidays added
 (except for the demo I put in there on june 18th) is part of this
 project and can be [downloaded right here][2].
 
@@ -35,4 +35,4 @@ php -S localhost:8080;
 That's it. Enjoy!
 
 [1]: https://github.com/mpdf/mpdf
-[2]: Weekkalender-2020.pdf
+[2]: Weekkalender-2023.pdf
