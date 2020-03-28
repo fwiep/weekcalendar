@@ -39,14 +39,14 @@ class PdfCalendar
      *
      * @var array
      */
-    private $_weeks = array();
+    private $_weeks = [];
 
     /**
-     * This calendar's holidays
+     * This calendar's events
      *
      * @var array
      */
-    private $_holidays = array();
+    private $_events = [];
 
     /**
      * Gets the date of Easter sunday in the given year
@@ -70,9 +70,9 @@ class PdfCalendar
      *
      * @return void
      */
-    private function _addHoliday(string $dateYMD, string $name) : void
+    private function _addEvent(string $dateYMD, string $name) : void
     {
-        $this->_holidays[$dateYMD][] = $name;
+        $this->_events[$dateYMD][] = $name;
     }
 
     /**
@@ -97,79 +97,79 @@ class PdfCalendar
     }
 
     /**
-     * Adds static holidays to this calendar
+     * Adds static events to this calendar
      * <br>(Christmas, newyearsday, Valentine's day, etc.)
      *
      * @param int $year the year to display
      *
      * @return void
      */
-    private function _addStaticHolidays(int $year) : void
+    private function _addStaticEvents(int $year) : void
     {
-        $this->_addHoliday(($year-1).'-12-25', '1<sup>e</sup> Kerstdag');
-        $this->_addHoliday(($year-1).'-12-26', '2<sup>e</sup> Kerstdag');
-        $this->_addHoliday($year.'-01-01', 'Nieuwjaarsdag');
-        $this->_addHoliday($year.'-02-14', 'Valentijnsdag');
-        $this->_addHoliday($year.'-04-27', 'Koningsdag');
-        $this->_addHoliday($year.'-05-04', 'Dodenherdenking');
-        $this->_addHoliday($year.'-05-05', 'Bevrijdingsdag');
-        $this->_addHoliday($year.'-12-25', '1<sup>e</sup> Kerstdag');
-        $this->_addHoliday($year.'-12-26', '2<sup>e</sup> Kerstdag');
-        $this->_addHoliday(($year+1).'-01-01', 'Nieuwjaarsdag');
+        $this->_addEvent(($year-1).'-12-25', '1<sup>e</sup> Kerstdag');
+        $this->_addEvent(($year-1).'-12-26', '2<sup>e</sup> Kerstdag');
+        $this->_addEvent($year.'-01-01', 'Nieuwjaarsdag');
+        $this->_addEvent($year.'-02-14', 'Valentijnsdag');
+        $this->_addEvent($year.'-04-27', 'Koningsdag');
+        $this->_addEvent($year.'-05-04', 'Dodenherdenking');
+        $this->_addEvent($year.'-05-05', 'Bevrijdingsdag');
+        $this->_addEvent($year.'-12-25', '1<sup>e</sup> Kerstdag');
+        $this->_addEvent($year.'-12-26', '2<sup>e</sup> Kerstdag');
+        $this->_addEvent(($year+1).'-01-01', 'Nieuwjaarsdag');
     }
 
     /**
-     * Adds private holidays to this calendar
+     * Adds private events to this calendar
      * <br>(wedding days, birthdays, name days, etc.)
      *
      * @param int $year the year to display
      *
      * @return void
      */
-    private function _addPrivateHolidays(int $year)
+    private function _addPrivateEvents(int $year)
     {
         if ($year >= 1942) {
-            $this->_addHoliday(
-                $year.'-06-18', 'Paul McCartney ('.($year-1942).')'
+            $this->_addEvent(
+                $year.'-06-18', 'Sir Paul McCartney ('.($year-1942).')'
             );
         }
     }
 
     /**
-     * Adds dynamic holidays to this calendar
+     * Adds dynamic events to this calendar
      * <br>(mother's day, father's day, Easter, Pentecost, Carnival, etc.)
      *
      * @param int $year the year to display
      *
      * @return void
      */
-    private function _addDynamicHolidays(int $year) : void
+    private function _addDynamicEvents(int $year) : void
     {
         $dtEaster = static::_getEasterDatetime($year);
 
-        $this->_addHoliday(
+        $this->_addEvent(
             static::_dtWrap($dtEaster, -49)->format('Y-m-d'), 'Carnavalszondag'
         );
-        $this->_addHoliday(
+        $this->_addEvent(
             static::_dtWrap($dtEaster, -46)->format('Y-m-d'), 'Aswoensdag'
         );
-        $this->_addHoliday(
+        $this->_addEvent(
             static::_dtWrap($dtEaster, -2)->format('Y-m-d'), 'Goede vrijdag'
         );
-        $this->_addHoliday(
+        $this->_addEvent(
             $dtEaster->format('Y-m-d'), '1<sup>e</sup> Paasdag'
         );
-        $this->_addHoliday(
+        $this->_addEvent(
             static::_dtWrap($dtEaster, 1)->format('Y-m-d'), '2<sup>e</sup> Paasdag'
         );
-        $this->_addHoliday(
+        $this->_addEvent(
             static::_dtWrap($dtEaster, 39)->format('Y-m-d'), 'Hemelvaartsdag'
         );
-        $this->_addHoliday(
+        $this->_addEvent(
             static::_dtWrap($dtEaster, 49)
                 ->format('Y-m-d'), '1<sup>e</sup> Pinksterdag'
         );
-        $this->_addHoliday(
+        $this->_addEvent(
             static::_dtWrap($dtEaster, 50)
                 ->format('Y-m-d'), '2<sup>e</sup> Pinksterdag'
         );
@@ -179,8 +179,7 @@ class PdfCalendar
             $dtMothersday->add(new \DateInterval('P1D'));
         }
         $dtMothersday->add(new \DateInterval('P7D'));
-
-        $this->_addHoliday(
+        $this->_addEvent(
             $dtMothersday->format('Y-m-d'), 'Moederdag'
         );
 
@@ -189,19 +188,34 @@ class PdfCalendar
             $dtFathersday->add(new \DateInterval('P1D'));
         }
         $dtFathersday->add(new \DateInterval('P14D'));
-
-        $this->_addHoliday(
+        $this->_addEvent(
             $dtFathersday->format('Y-m-d'), 'Vaderdag'
+        );
+        
+        $dtSummertime = new \DateTime($year.'-03-31');
+        while ($dtSummertime->format('N') != 7) {
+            $dtSummertime->sub(new \DateInterval('P1D'));
+        }
+        $this->_addEvent(
+            $dtSummertime->format('Y-m-d'), 'zomertijd (2:00 &rarr; 3:00)'
+        );
+        
+        $dtWintertime = new \DateTime($year.'-10-31');
+        while ($dtWintertime->format('N') != 7) {
+            $dtWintertime->sub(new \DateInterval('P1D'));
+        }
+        $this->_addEvent(
+            $dtWintertime->format('Y-m-d'), 'wintertijd (3:00 &rarr; 2:00)'
         );
     }
 
     /**
      * Creates a new week calendar
      *
-     * @param int  $year                   the year to display
-     * @param bool $includePrivateHolidays whether to include private holidays
+     * @param int  $year                 the year to display
+     * @param bool $includePrivateEvents whether to include private events
      */
-    public function __construct(int $year, bool $includePrivateHolidays)
+    public function __construct(int $year, bool $includePrivateEvents)
     {
         if ($year < 1582 || $year > 3000) {
             throw new \InvalidArgumentException(
@@ -228,11 +242,11 @@ class PdfCalendar
                 $loopDate->add(new \DateInterval('P1D'));
             }
         }
-        $this->_addStaticHolidays($year);
-        $this->_addDynamicHolidays($year);
+        $this->_addStaticEvents($year);
+        $this->_addDynamicEvents($year);
 
-        if ($includePrivateHolidays) {
-            $this->_addPrivateHolidays($year);
+        if ($includePrivateEvents) {
+            $this->_addPrivateEvents($year);
         }
     }
 
@@ -287,15 +301,15 @@ class PdfCalendar
                 $lastRow = ($ix == 6);
                 $extraClass = ($lastRow ? ' last' : '');
                 $dayYMD = $day->format('Y-m-d');
-                $isHoliday = array_key_exists($dayYMD, $this->_holidays);
+                $isEvent = array_key_exists($dayYMD, $this->_events);
 
                 $html .= '<tr>';
                 $html .= sprintf(
                     '<td class="l%s">%s%s</td>',
                     $extraClass,
                     strftime('%A', $day->format('U')),
-                    ($isHoliday ? '<br /><span class="holiday">'.
-                        join('<br />', $this->_holidays[$dayYMD]).'</span>' : '')
+                    ($isEvent ? '<br /><span class="event">'.
+                        join('<br />', $this->_events[$dayYMD]).'</span>' : '')
                 );
                 $html .= sprintf(
                     '<td class="r%s">%d</td>',
@@ -307,6 +321,6 @@ class PdfCalendar
             $html .= '</table>';
             $pdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
         }
-        $pdf->Output('Weekkalender-'.$this->_year.'.pdf', D::DOWNLOAD);
+        $pdf->Output('Weekkalender '.$this->_year.'.pdf', D::DOWNLOAD);
     }
 }

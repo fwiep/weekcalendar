@@ -11,13 +11,13 @@ work.
 All major Dutch holidays are added to the corresponding days, both static
 and dynamic. For example Easter, Christmas, mother's and father's day.
 
-There is also the option to add one or more private, additional holidays
+There is also the option to add one or more private, additional events
 to the calendar. You could put your own birthday in there, your wedding
 anniversary&hellip;
 
 ## Example
 
-A week calendar of the year 2023, having no additional holidays added
+A week calendar of the year 2023, having no additional events added
 (except for the demo I put in there on june 18th) is part of this
 project and can be [downloaded right here][2].
 
