@@ -6,7 +6,7 @@ Generate Dutch PDF week calendars using PHP
 
 This project generates an A4 PDF document containing one page for every
 ISO-8601 week of the given year. It uses [mPDF][1] for the PDF dirty
-work.
+work. See also FWiePs [MonthCalendar][3].
 
 All major Dutch holidays are added to the corresponding days, both static
 and dynamic. For example Easter, Christmas, mother's and father's day.
@@ -36,3 +36,4 @@ That's it. Enjoy!
 
 [1]: https://github.com/mpdf/mpdf
 [2]: Weekkalender-2023.pdf
+[3]: https://github.com/fwiep/monthcalendar
