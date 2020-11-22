@@ -19,15 +19,24 @@ setlocale(LC_ALL, array('nl_NL.utf8', 'nl_NL', 'nl', 'dutch', 'nld'));
 mb_internal_encoding('UTF-8');
 
 require_once __DIR__ . '/vendor/autoload.php';
-$y = (date('Y') + 1);
+$year = (date('Y') + 1);
 
 if ($_POST) {
     if (array_key_exists('inpYear', $_POST) and is_numeric($_POST['inpYear'])) {
-        $y = intval($_POST['inpYear']);
+        $year = intval($_POST['inpYear']);
     }
     $includePrivateHolidays = array_key_exists('inpIncludePrivate', $_POST);
-    $c = new FWieP\PdfCalendar($y, $includePrivateHolidays);
-    $c->getPDF();
+    
+    $paperSize = array_key_exists('inpPaperSize', $_POST)
+      ? strtoupper(trim($_POST['inpPaperSize'])) : null;
+    
+    $yearValid = ($year >= 1582 && $year <= 3000);
+    $paperSizeValid = ($paperSize == 'A4' || $paperSize == 'A5');
+
+    if ($yearValid && $paperSizeValid) {
+      $c = new FWieP\PdfCalendar($year, $paperSize, $includePrivateHolidays);
+      $c->getPDF();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -43,9 +52,19 @@ if ($_POST) {
       <legend>Kies een jaartal en druk op "Genereren"</legend>
 
       <div style="margin: 1em 0;">
-        <label for="inpYear">Jaar</label> <input type="number"
+        <label for="inpYear">Jaar:</label> <input type="number"
           name="inpYear" id="inpYear" min="1582" max="3000"
-          value="<?php print $y ?>" />
+          value="<?php print $year ?>" />
+      </div>
+
+      <div style="margin: 1em 0;">
+        <span>Papierformaat:</span>
+        <label for="inpPaperSizeA4"><input type="radio"
+          name="inpPaperSize" id="inpPaperSizeA4"
+          value="A4" checked="checked" />A4</label>
+        <label for="inpPaperSizeA5"><input type="radio"
+          name="inpPaperSize" id="inpPaperSizeA5"
+          value="A5" />A5</label>
       </div>
 
       <div style="margin: 1em 0;">

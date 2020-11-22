@@ -35,6 +35,13 @@ class PdfCalendar
     private $_year = 0;
 
     /**
+     * The calendar's papersize (A4 or A5)
+     * 
+     * @var string
+     */
+    private $_paperSize = 'A4';
+
+    /**
      * This calendar's weeks
      *
      * @var array
@@ -55,7 +62,7 @@ class PdfCalendar
      *
      * @return \DateTime
      */
-    private function _getEasterDatetime(int $year) : \DateTime
+    private static function _getEasterDatetime(int $year) : \DateTime
     {
         $base = new \DateTime("$year-03-21");
         $days = easter_days($year);
@@ -83,7 +90,7 @@ class PdfCalendar
      *
      * @return \DateTime
      */
-    private function _dtWrap(\DateTime $dt, int $days) : \DateTime
+    private static function _dtWrap(\DateTime $dt, int $days) : \DateTime
     {
         $outDt = clone $dt;
         $di = new \DateInterval('P'.abs($days).'D');
@@ -210,19 +217,42 @@ class PdfCalendar
     }
 
     /**
+     * Gets this calendar's title/name for filename and PDF metadata
+     * 
+     * @return string
+     */
+    private function _getTitle() : string
+    {
+        return sprintf(
+            'Weekkalender %d (%s)',
+            $this->_year,
+            $this->_paperSize
+        );
+    }
+
+    /**
      * Creates a new week calendar
      *
-     * @param int  $year                 the year to display
-     * @param bool $includePrivateEvents whether to include private events
+     * @param int    $year                 the year to display
+     * @param string $paperSize            the calendar's papersize (A4 or A5)
+     * @param bool   $includePrivateEvents whether to include private events
      */
-    public function __construct(int $year, bool $includePrivateEvents)
-    {
+    public function __construct(
+        int $year, string $paperSize = 'A4', bool $includePrivateEvents = false
+    ) {
         if ($year < 1582 || $year > 3000) {
             throw new \InvalidArgumentException(
                 "Year should be between 1582 and 3000!"
             );
         }
+        if (!in_array($paperSize, ['A4', 'A5'])) {
+            throw new \InvalidArgumentException(
+                "Invalid pagesize selected!"
+            );
+        }
         $this->_year = $year;
+        $this->_paperSize = strtoupper($paperSize);
+
         $firstJan = new \DateTime($year.'-01-01');
         $nextFirstJan = new \DateTime(($year+1).'-01-01');
         $startDate = clone $firstJan;
@@ -258,7 +288,7 @@ class PdfCalendar
     public function getPDF() : void
     {
         $pdfConfig = array(
-            'format' => 'A4',
+            'format' => $this->_paperSize,
             'margin_left' => 15,
             'margin_right' => 15,
             'margin_top' => 24,
@@ -268,6 +298,9 @@ class PdfCalendar
             'orientation' => 'P',
         );
         $pdf = new \Mpdf\Mpdf($pdfConfig);
+        $pdf->SetTitle($this->_getTitle());
+        $pdf->SetAuthor('Frans-Willem Post (FWieP)');
+
         $css = file_get_contents('style.css');
         $pdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
 
@@ -321,6 +354,6 @@ class PdfCalendar
             $html .= '</table>';
             $pdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
         }
-        $pdf->Output('Weekkalender '.$this->_year.'.pdf', D::DOWNLOAD);
+        $pdf->Output($this->_getTitle().'.pdf', D::DOWNLOAD);
     }
 }
