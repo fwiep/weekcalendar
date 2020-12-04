@@ -8,7 +8,7 @@
  * @package  WeekCalendar
  * @author   Frans-Willem Post (FWieP) <fwiep@fwiep.nl>
  * @license  https://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link     https://fwiep.nl/
+ * @link     https://www.fwiep.nl/
  */
 namespace FWieP;
 
@@ -23,7 +23,7 @@ use \Mpdf\Output\Destination as D;
  * @package  WeekCalendar
  * @author   Frans-Willem Post (FWieP) <fwiep@fwiep.nl>
  * @license  https://www.gnu.org/copyleft/gpl.html GNU General Public License
- * @link     https://fwiep.nl/
+ * @link     https://www.fwiep.nl/
  */
 class PdfCalendar
 {
@@ -123,23 +123,6 @@ class PdfCalendar
         $this->_addEvent($year.'-12-25', '1<sup>e</sup> Kerstdag');
         $this->_addEvent($year.'-12-26', '2<sup>e</sup> Kerstdag');
         $this->_addEvent(($year+1).'-01-01', 'Nieuwjaarsdag');
-    }
-
-    /**
-     * Adds private events to this calendar
-     * <br>(wedding days, birthdays, name days, etc.)
-     *
-     * @param int $year the year to display
-     *
-     * @return void
-     */
-    private function _addPrivateEvents(int $year)
-    {
-        if ($year >= 1942) {
-            $this->_addEvent(
-                $year.'-06-18', 'Sir Paul McCartney ('.($year-1942).')'
-            );
-        }
     }
 
     /**
@@ -275,8 +258,16 @@ class PdfCalendar
         $this->_addStaticEvents($year);
         $this->_addDynamicEvents($year);
 
-        if ($includePrivateEvents) {
-            $this->_addPrivateEvents($year);
+        if ($includePrivateEvents && defined('PRIVATE_EVENTS')) {
+            foreach (PRIVATE_EVENTS as $ymd => $eventname) {
+                $y = intval(substr($ymd, 0, 4));
+                $md = substr($ymd, 4);
+                if ($year >= $y) {
+                    $this->_addEvent(
+                        $year.$md, $eventname.' ('.($year-$y).')'
+                    );
+                }
+            }
         }
     }
 

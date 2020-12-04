@@ -19,6 +19,9 @@ setlocale(LC_ALL, array('nl_NL.utf8', 'nl_NL', 'nl', 'dutch', 'nld'));
 mb_internal_encoding('UTF-8');
 
 require_once __DIR__ . '/vendor/autoload.php';
+if (file_exists(__DIR__.'/private-events.php')) {
+    include_once __DIR__.'/private-events.php';
+}
 $year = (date('Y') + 1);
 
 if ($_POST) {
@@ -34,8 +37,8 @@ if ($_POST) {
     $paperSizeValid = ($paperSize == 'A4' || $paperSize == 'A5');
 
     if ($yearValid && $paperSizeValid) {
-      $c = new FWieP\PdfCalendar($year, $paperSize, $includePrivateHolidays);
-      $c->getPDF();
+        $c = new FWieP\PdfCalendar($year, $paperSize, $includePrivateHolidays);
+        $c->getPDF();
     }
 }
 ?>
