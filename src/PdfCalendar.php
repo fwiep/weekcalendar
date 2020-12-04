@@ -260,11 +260,26 @@ class PdfCalendar
 
         if ($includePrivateEvents && defined('PRIVATE_EVENTS')) {
             foreach (PRIVATE_EVENTS as $ymd => $eventname) {
+
                 $y = intval(substr($ymd, 0, 4));
                 $md = substr($ymd, 4);
+                $isAnniversary = ($y != 0);
+                $eventFormat = ($isAnniversary ? '%s (%d)' : '%s');
+                
+                // Add events only if they have already occurred
                 if ($year >= $y) {
+                    
+                    // Add to following year
                     $this->_addEvent(
-                        $year.$md, $eventname.' ('.($year-$y).')'
+                        ($year+1).$md, sprintf($eventFormat, $eventname, ($year-$y+1))
+                    );
+                    // Add to current year
+                    $this->_addEvent(
+                        $year.$md, sprintf($eventFormat, $eventname, ($year-$y))
+                    );
+                    // Add to previous year
+                    $this->_addEvent(
+                        ($year-1).$md, sprintf($eventFormat, $eventname, ($year-$y-1))
                     );
                 }
             }
