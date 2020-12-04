@@ -271,15 +271,18 @@ class PdfCalendar
                     
                     // Add to following year
                     $this->_addEvent(
-                        ($year+1).$md, sprintf($eventFormat, $eventname, ($year-$y+1))
+                        ($year+1).$md,
+                        sprintf($eventFormat, $eventname, ($year-$y+1))
                     );
                     // Add to current year
                     $this->_addEvent(
-                        $year.$md, sprintf($eventFormat, $eventname, ($year-$y))
+                        $year.$md,
+                        sprintf($eventFormat, $eventname, ($year-$y))
                     );
                     // Add to previous year
                     $this->_addEvent(
-                        ($year-1).$md, sprintf($eventFormat, $eventname, ($year-$y-1))
+                        ($year-1).$md,
+                        sprintf($eventFormat, $eventname, ($year-$y-1))
                     );
                 }
             }
