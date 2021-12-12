@@ -2,7 +2,7 @@
 /**
  * 52-53 page PDF week calendar
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category Calendar
  * @package  WeekCalendar
@@ -11,13 +11,13 @@
  * @link     https://www.fwiep.nl/
  */
 namespace FWieP;
-
+use \IntlDateFormatter as IDF;
 use \Mpdf\Output\Destination as D;
 
 /**
  * 52-53 page PDF week calendar
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category Calendar
  * @package  WeekCalendar
@@ -54,6 +54,20 @@ class PdfCalendar
      * @var array
      */
     private $_events = [];
+
+    /**
+     * This calendar's locale
+     * 
+     * @var string
+     */
+    private $_locale = 'nl_NL';
+
+    /**
+     * This calendar's timezone
+     * 
+     * @var \DateTimeZone
+     */
+    private $_tz;
 
     /**
      * Gets the date of Easter sunday in the given year
@@ -233,11 +247,12 @@ class PdfCalendar
                 "Invalid pagesize selected!"
             );
         }
+        $this->_tz = new \DateTimeZone('Europe/Amsterdam');
         $this->_year = $year;
         $this->_paperSize = strtoupper($paperSize);
 
-        $firstJan = new \DateTime($year.'-01-01');
-        $nextFirstJan = new \DateTime(($year+1).'-01-01');
+        $firstJan = new \DateTime($year.'-01-01', $this->_tz);
+        $nextFirstJan = new \DateTime(($year+1).'-01-01', $this->_tz);
         $startDate = clone $firstJan;
 
         while ($startDate->format('N') > 1) {
@@ -296,7 +311,10 @@ class PdfCalendar
      */
     public function getPDF() : void
     {
-        $pdfConfig = array(
+        $dtfmt = new IDF(
+            $this->_locale, IDF::NONE, IDF::NONE, $this->_tz, IDF::GREGORIAN
+        );
+        $pdfConfig = [
             'format' => $this->_paperSize,
             'margin_left' => 15,
             'margin_right' => 15,
@@ -305,7 +323,7 @@ class PdfCalendar
             'margin_header' => 9,
             'margin_footer' => 9,
             'orientation' => 'P',
-        );
+        ];
         $pdf = new \Mpdf\Mpdf($pdfConfig);
         $pdf->SetTitle($this->_getTitle());
         $pdf->SetAuthor('Frans-Willem Post (FWieP)');
@@ -318,14 +336,18 @@ class PdfCalendar
             $monday = reset($days);
             $sunday = end($days);
 
-            $mWeek = strftime('%B', $monday->format('U'));
-            $mMonday = strftime('%b', $monday->format('U'));
-            $mSunday = strftime('%b', $sunday->format('U'));
+            $dtfmt->setPattern('MMMM');
+            $mWeek = $dtfmt->format($monday);
+            $dtfmt->setPattern('MMM');
+            $mMonday = $dtfmt->format($monday);
+            $mSunday = $dtfmt->format($sunday);
 
-            $yWeek = strftime('%Y', $monday->format('U'));
-            $yMonday = strftime('%Y', $monday->format('U'));
-            $ySunday = strftime('%Y', $sunday->format('U'));
-            $ySundayShort = strftime('%y', $sunday->format('U'));
+            $dtfmt->setPattern('Y');
+            $yWeek = $dtfmt->format($monday);
+            $yMonday = $dtfmt->format($monday);
+            $ySunday = $dtfmt->format($sunday);
+            $dtfmt->setPattern('yy');
+            $ySundayShort = $dtfmt->format($sunday);
 
             $html = '<table>';
 
@@ -339,6 +361,8 @@ class PdfCalendar
                 ($ySunday == $yMonday ? $yWeek : $yMonday.'/'.$ySundayShort)
             );
 
+            $dtfmt->setPattern('EEEE');
+
             foreach ($days as $ix => $day) {
                 $lastRow = ($ix == 6);
                 $extraClass = ($lastRow ? ' last' : '');
@@ -349,7 +373,7 @@ class PdfCalendar
                 $html .= sprintf(
                     '<td class="l%s">%s%s</td>',
                     $extraClass,
-                    strftime('%A', $day->format('U')),
+                    $dtfmt->format($day),
                     ($isEvent ? '<br /><span class="event">'.
                         join('<br />', $this->_events[$dayYMD]).'</span>' : '')
                 );
