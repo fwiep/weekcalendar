@@ -387,6 +387,27 @@ class PdfCalendar
             $html .= '</table>';
             $pdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
         }
+        /**
+         * For easy booklet printing, ensure a page count dividable by 4.
+         * See, for example
+         * https://help.gnome.org/users/evince/stable/duplex-npage.html.en
+         * for instructions on how to do this.
+         *
+         * Full pagenumber sequence for a 52-weeks document
+         * 52,1,2,51,50,3,4,49,48,5,6,47,46,7,8,45,44,9,10,43,42,11,12,41,40,13,
+         * 14,39,38,15,16,37,36,17,18,35,34,19,20,33,32,21,22,31,30,23,24,29,28,
+         * 25,26,27
+         * 
+         * Full pagenumber sequence for a 53-weeks document
+         * 56,1,2,55,54,3,4,53,52,5,6,51,50,7,8,49,48,9,10,47,46,11,12,45,44,13,
+         * 14,43,42,15,16,41,40,17,18,39,38,19,20,37,36,21,22,35,34,23,24,33,32,
+         * 25,26,31,30,27,28,29
+        */
+        $weeksCount = count($this->_weeks);
+        while ($weeksCount % 4 != 0) {
+            $pdf->AddPage();
+            $weeksCount++;
+        }
         $pdf->Output($this->_getTitle().'.pdf', D::DOWNLOAD);
     }
 }
