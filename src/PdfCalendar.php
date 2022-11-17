@@ -391,7 +391,7 @@ class PdfCalendar
         $pdf->AddPage();
         $html = '<table>';
         $html .= '<tr><th class="l">Notities</th>';
-        for ($i=0; $i < 25; $i++) { 
+        for ($i = 0; $i < 25; $i++) {
             $html .= '<tr><td class="notes"> </td></tr>';
         }
         $html .= '</table>';
