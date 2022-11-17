@@ -20,12 +20,16 @@ td.r{
   font-weight: bold;
   padding-top: 13mm;
 }
+td.notes {
+  border-top: none;
+  border-bottom: solid 0.5mm black;
+  height: 10mm;
+  width: 19cm;
+}
 .l{
   width: 15cm;
 }
 .r{
   text-align: right;
   width: 4cm;
-}
-.event{
 }

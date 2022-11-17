@@ -387,6 +387,16 @@ class PdfCalendar
             $html .= '</table>';
             $pdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
         }
+        // Add a single 'Notes' page
+        $pdf->AddPage();
+        $html = '<table>';
+        $html .= '<tr><th class="l">Notities</th>';
+        for ($i=0; $i < 25; $i++) { 
+            $html .= '<tr><td class="notes"> </td></tr>';
+        }
+        $html .= '</table>';
+        $pdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+
         /**
          * For easy booklet printing, ensure a page count dividable by 4.
          * See, for example
@@ -404,6 +414,8 @@ class PdfCalendar
          * 25,26,31,30,27,28,29
         */
         $weeksCount = count($this->_weeks);
+        $weeksCount += 1; // include Notes in page count
+
         while ($weeksCount % 4 != 0) {
             $pdf->AddPage();
             $weeksCount++;
