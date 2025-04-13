@@ -131,7 +131,12 @@ class PdfCalendar
         $this->_addEvent(($year-1).'-12-26', '2<sup>e</sup> Kerstdag');
         $this->_addEvent($year.'-01-01', 'Nieuwjaarsdag');
         $this->_addEvent($year.'-02-14', 'Valentijnsdag');
-        $this->_addEvent($year.'-04-27', 'Koningsdag');
+        
+        if ((new \DateTime($year.'-04-27'))->format('N') == '7') {
+            $this->_addEvent($year.'-04-26', 'Koningsdag');
+        } else {
+            $this->_addEvent($year.'-04-27', 'Koningsdag');
+        }
         $this->_addEvent($year.'-05-04', 'Dodenherdenking');
         $this->_addEvent($year.'-05-05', 'Bevrijdingsdag');
         $this->_addEvent($year.'-12-25', '1<sup>e</sup> Kerstdag');
